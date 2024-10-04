@@ -1,0 +1,17 @@
+{
+    "name": "employee-payroll-api",
+    "version": "1.0.0",
+    "description": "API to retrieve employee salary",
+    "main": "app.js",
+    "scripts": {
+        "start": "nodemon app.js"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "express": "^4.21.0",
+        "sqlite3": "^5.1.7"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.7"
+    }
+}

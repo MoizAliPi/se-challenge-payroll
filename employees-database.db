@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS users (
+    employees_id TEXT ,
+    job_group TEXT,
+    hours_worked TEXT
+    date DATE
+);
