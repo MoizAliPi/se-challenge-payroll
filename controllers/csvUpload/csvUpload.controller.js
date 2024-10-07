@@ -1,8 +1,8 @@
 const express = require("express");
 const fs = require("fs");
 const csv = require("fast-csv");
-const csvUploadService = require("../services/csvUpload.service");
-const upload = require("../utils/csv-upload-filter.utils");
+const csvUploadService = require("../../services/csvUpload.service");
+const upload = require("../../utils/csv-upload-filter.utils");
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.post("/", upload.single("file"), async (req, res) => {
   try {
     if (req.file == undefined) {
       return res.status(400).send({
-        message: "Please upload a CSV file!",
+        message: "Invalid CSV file",
       });
     }
 
