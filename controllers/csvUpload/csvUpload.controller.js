@@ -16,6 +16,14 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     let csvData = [];
     let filePath = __basedir + "/uploads/" + req.file.filename;
+
+    // Check if file already exists
+    if (fs.existsSync(filePath)) {
+      return res.status(400).send({
+        message: "File already exists",
+      });
+    }
+
     fs.createReadStream(filePath)
       .pipe(csv.parse({ headers: true }))
       .on("error", (error) => {
