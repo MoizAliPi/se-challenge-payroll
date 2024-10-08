@@ -131,6 +131,25 @@ Please commit the following to this `README.md`:
    - If this application was destined for a production environment, what would you add or change?
    - What compromises did you have to make as a result of the time constraints of this challenge?
 
+### Instructions on How to run
+1. Clone the repository in your local machine.
+2. Install all the necessary packages using the command `npm install`.
+3. Run the command `npm run start` to initialize the server.
+4. Use `Postman` or another REST API client to call the endpoints.
+  4a. `POST /api/upload-csv`- will take a csv file in the request and upload it to the server.
+  4b. `GET /api/payroll-report` - will return the generated report for all employees.
+
+### Answers
+- How did you test that your implementation was correct?
+I used the REST api clients to test my endpoints and its associated methods to make sure that correct results are returning and errors are thrown for the edge cases.
+I also setup couple tests to simulate the working environment and see if the results match the expected behavior.
+
+- If this application was destined for a production environment, what would you add or change?
+I would add integration test for testing front to back testing of this feature, making sure that the desired output is formatted correctly on the frontend in different environments. I would
+also make sure that the reports are generated from a read-replica database of the current database so that querying the data is managed within the load and does not overwhelm the backend with CPU and memory usage issues. Also batching the upload process would be effective if the csv upload contains the no. of employees in a significantly larger amount.
+
+- What compromises did you have to make as a result of the time constraints of this challenge?
+I would have added more testing coverage for utility and service functions so that the business logic and requirements are tested against the expected behavior, I would have also tried to simulate larger csv files to setup a batching process for upload operation and making sure that the server is resilient for such edge cases.
 ## Submission Instructions
 
 1. Clone the repository.
