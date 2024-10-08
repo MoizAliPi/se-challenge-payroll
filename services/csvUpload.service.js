@@ -5,7 +5,7 @@ const sqlite3 = require("sqlite3").verbose();
  * throws an error if the data could not be inserted
  * into the database.
  */
-async function upload(data) {
+function upload(data) {
   const db = new sqlite3.Database("employee-payroll.db");
   try {
     const sql = `INSERT INTO employees (employee_id, hours_worked, job_group, date) VALUES (?, ?, ? , ?)`;
@@ -28,8 +28,6 @@ async function upload(data) {
   } catch (error) {
     console.error(error);
     throw error; // Re-throw the error to allow the controller to handle it
-  } finally {
-    db.close();
   }
 }
 

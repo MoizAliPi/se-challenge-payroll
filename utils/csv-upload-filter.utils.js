@@ -4,7 +4,10 @@ const path = require("path");
 // Set global directory
 global.__basedir = path.join(__dirname, "..");
 
-// Multer Upload Storage
+/**
+ * Stores the file in request body in
+ * the local filesystem.
+ */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, __basedir + "/uploads/");
@@ -14,10 +17,22 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filter for CSV file
+/**
+ * Returns true if the given file is of type
+ * 'csv' and matches the regex pattern for the
+ * file name.
+ */
 const csvFilter = (req, file, cb) => {
   if (file.mimetype.includes("csv")) {
-    cb(null, true);
+    const regex = /^time-report-\d+$/;
+    if (file.originalname.match(regex)) {
+      cb(null, true);
+    } else {
+      cb(
+        "Invalid file name; it should match 'time-report-x' where x is an integer",
+        false
+      );
+    }
   } else {
     cb("Please upload only csv file.", false);
   }

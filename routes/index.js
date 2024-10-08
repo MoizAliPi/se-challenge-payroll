@@ -3,7 +3,7 @@ const router = express.Router();
 const sqlite3 = require("sqlite3").verbose();
 
 const csvUploadRouter = require("../controllers/csvUpload/csvUpload.controller");
-//const payrollReportRouter = require("../controllers/payrollReport");
+const payrollReportRouter = require("../controllers/payrollReport/payrollReport.controller");
 
 // Create a database connection
 const db = new sqlite3.Database("employee-payroll.db", (err) => {
@@ -24,6 +24,6 @@ router.get("/health", (_req, res) => {
   });
 });
 router.use("/upload-csv", csvUploadRouter);
-//router.use("/payroll-report", payrollReportRouter);
+router.use("/payroll-report", payrollReportRouter);
 
 module.exports = router;
