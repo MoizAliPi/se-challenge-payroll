@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const sqlite3 = require("sqlite3").verbose();
 
-const csvUploadRouter = require("../controllers/csvUpload/csvUpload.controller");
-const payrollReportRouter = require("../controllers/payrollReport/payrollReport.controller");
+const csvUploadRouter = require("../controllers/csvUpload.controller");
+const payrollReportRouter = require("../controllers/payrollReport.controller");
 
 // Create a database connection
 const db = new sqlite3.Database("employee-payroll.db", (err) => {

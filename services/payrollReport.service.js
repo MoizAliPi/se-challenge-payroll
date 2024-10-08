@@ -76,7 +76,7 @@ const getReport = async () => {
 
     return sortedEmployeeReport;
   } catch (err) {
-    console.error("Error retrieving employees:", err);
+    throw new Error("Error generating report", err);
   }
 };
 

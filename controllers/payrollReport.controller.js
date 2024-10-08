@@ -1,5 +1,5 @@
 const express = require("express");
-const payrollReportService = require("../../services/payrollReport.service");
+const payrollReportService = require("../services/payrollReport.service");
 
 const router = express.Router();
 
@@ -20,7 +20,6 @@ router.get("/", async (req, res) => {
       });
     })
     .catch((error) => {
-      console.error(error);
       res.status(500).send("Error getting the payroll report");
     });
 });
