@@ -6,6 +6,12 @@ const upload = require("../../utils/csv-upload-filter.utils");
 
 const router = express.Router();
 
+/**
+ * Uploads the csv file to the database.
+ *
+ * @param {Object} req - The request object - contains the csv file to upload.
+ * @param {Object} res - The response object.
+ */
 router.post("/", upload.single("file"), async (req, res) => {
   try {
     if (req.file == undefined) {
