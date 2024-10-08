@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
  */
 const csvFilter = (req, file, cb) => {
   if (file.mimetype.includes("csv")) {
-    const regex = /^time-report-\d+$/;
+    const regex = /^time-report-\d+\.csv$/;
     if (file.originalname.match(regex)) {
       cb(null, true);
     } else {

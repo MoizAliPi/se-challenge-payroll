@@ -6,28 +6,37 @@ const sqlite3 = require("sqlite3").verbose();
  * into the database.
  */
 function upload(data) {
-  const db = new sqlite3.Database("employee-payroll.db");
+  const db = new sqlite3.Database("employee-time-report.db");
   try {
-    const sql = `INSERT INTO employees (employee_id, hours_worked, job_group, date) VALUES (?, ?, ? , ?)`;
+    // Start a transaction to improve performance and ensure atomicity
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION"); // Start transaction
 
-    for (const row of data) {
-      const employee_id = row["employee id"];
-      const hours_worked = row["hours worked"];
-      const job_group = row["job group"];
-      const date = row.date;
+      const sql = `INSERT INTO time_report (employee_id, hours_worked, job_group, date) VALUES (?, ?, ?, ?)`;
+      const stmt = db.prepare(sql); // Prepare the SQL statement
 
-      db.run(sql, [employee_id, hours_worked, job_group, date], (err) => {
-        if (err) {
-          console.error(err);
-          throw err;
-        }
-      });
-    }
+      for (const row of data) {
+        const employee_id = row["employee id"];
+        const hours_worked = row["hours worked"];
+        const job_group = row["job group"];
+        const date = row.date;
+
+        stmt.run(employee_id, hours_worked, job_group, date, (err) => {
+          if (err) {
+            console.error(err);
+            throw err; // Handle errors appropriately
+          }
+        });
+      }
+
+      stmt.finalize(); // Finalize the statement
+      db.run("COMMIT"); // Commit the transaction
+    });
 
     return "CSV file uploaded successfully!";
   } catch (error) {
-    console.error(error);
-    throw error; // Re-throw the error to allow the controller to handle it
+    console.error("Error uploading CSV file:", error);
+    throw error;
   }
 }
 

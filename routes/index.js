@@ -6,7 +6,7 @@ const csvUploadRouter = require("../controllers/csvUpload.controller");
 const payrollReportRouter = require("../controllers/payrollReport.controller");
 
 // Create a database connection
-const db = new sqlite3.Database("employee-payroll.db", (err) => {
+const db = new sqlite3.Database("employee-time-report.db", (err) => {
   if (err) {
     console.error(err);
   }
@@ -15,7 +15,7 @@ const db = new sqlite3.Database("employee-payroll.db", (err) => {
 
 router.get("/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
-  db.all("SELECT * FROM employees", (err, rows) => {
+  db.all("SELECT * FROM time_report", (err, rows) => {
     if (err) {
       console.error("Error querying database:", err);
     } else {

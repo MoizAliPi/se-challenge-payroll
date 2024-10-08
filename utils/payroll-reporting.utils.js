@@ -6,8 +6,7 @@
  * @returns {Object} {startDate, endDate}
  */
 const getPayDateRange = (date) => {
-  const splitDate = date.split("/");
-  const parsedDate = new Date(splitDate[2], splitDate[1] - 1, splitDate[0]);
+  const parsedDate = formatDateStringIntoDate(date);
 
   // Ensure the date is valid
   if (isNaN(parsedDate)) {
@@ -27,17 +26,27 @@ const getPayDateRange = (date) => {
   }
 
   return {
-    startDate: formatDate(biweeklyStartDate),
-    endDate: formatDate(biweeklyEndDate),
+    startDate: formatDateIntoISODate(biweeklyStartDate),
+    endDate: formatDateIntoISODate(biweeklyEndDate),
   };
 };
 
 /**
- * Parsing the date into the format of YYYY-MM-DD.
+ * Parsing DD/MM/YYYY into a Date object.
  * @param {String} date
+ */
+const formatDateStringIntoDate = (date) => {
+  const splitDate = date.split("/");
+  const parsedDate = new Date(splitDate[2], splitDate[1] - 1, splitDate[0]);
+  return parsedDate;
+};
+
+/**
+ * Parsing the date into the format of YYYY-MM-DD.
+ * @param {Date} date
  * @returns {String} formatted date
  */
-const formatDate = (date) => {
+const formatDateIntoISODate = (date) => {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
@@ -55,4 +64,8 @@ const formatDollarAmountFromNumber = (number) => {
     : undefined;
 };
 
-module.exports = { getPayDateRange, formatDollarAmountFromNumber };
+module.exports = {
+  getPayDateRange,
+  formatDollarAmountFromNumber,
+  formatDateStringIntoDate,
+};

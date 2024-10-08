@@ -22,14 +22,6 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     let csvData = [];
     let filePath = __basedir + "/uploads/" + req.file.filename;
-    console.log("file", req.file.filename);
-    console.log("filePath", filePath);
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
-      return res.status(400).send({
-        message: "File already exists",
-      });
-    }
 
     fs.createReadStream(filePath)
       .pipe(csv.parse({ headers: true }))
@@ -39,8 +31,8 @@ router.post("/", upload.single("file"), async (req, res) => {
       .on("data", (row) => {
         csvData.push(row);
       })
-      .on("end", async () => {
-        const message = await csvUploadService.upload(csvData);
+      .on("end", () => {
+        const message = csvUploadService.upload(csvData);
         res.send(message);
       });
   } catch (error) {

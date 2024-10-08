@@ -54,18 +54,17 @@ describe("POST /api/upload-csv", () => {
 
     const res = await request(app)
       .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv") // Use a path to a mock file if needed
+      .attach("file", "../__mocks__/test.csv")
       .expect(200);
 
     expect(res.text).toBe("File uploaded successfully");
   });
 
   it("should return 400 if file already exists", async () => {
-    fs.existsSync.mockReturnValue(true); // Simulate file exists
-
+    fs.existsSync.mockReturnValue(true);
     const res = await request(app)
       .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv") // Use a path to a mock file if needed
+      .attach("file", "../__mocks__/test.csv")
       .expect(400);
 
     expect(res.body.message).toBe("File already exists");
@@ -88,7 +87,7 @@ describe("POST /api/upload-csv", () => {
 
     const res = await request(app)
       .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv") // Use a path to a mock file if needed
+      .attach("file", "../__mocks__/test.csv")
       .expect(500);
 
     expect(res.text).toBe("Error uploading CSV file");
