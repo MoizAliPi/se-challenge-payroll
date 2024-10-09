@@ -20,7 +20,9 @@ router.get("/", async (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(500).send("Error getting the payroll report");
+      res
+        .status(500)
+        .send(`Error getting the payroll report: ${error.message}`);
     });
 });
 

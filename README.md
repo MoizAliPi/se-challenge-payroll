@@ -142,14 +142,14 @@ Please commit the following to this `README.md`:
 ### Answers
 - How did you test that your implementation was correct?
 I used the REST api clients to test my endpoints and its associated methods to make sure that correct results are returning and errors are thrown for the edge cases.
-I also setup couple tests to simulate the working environment and see if the results match the expected behavior.
+I also setup couple tests to test the business logic of the services to makesure that it meets the requirements.
 
 - If this application was destined for a production environment, what would you add or change?
-I would add integration test for testing front to back testing of this feature, making sure that the desired output is formatted correctly on the frontend in different environments. I would
-also make sure that the reports are generated from a read-replica database of the current database so that querying the data is managed within the load and does not overwhelm the backend with CPU and memory usage issues. Also batching the upload process would be effective if the csv upload contains the no. of employees in a significantly larger amount.
+I would add integration test for testing front to back testing of this feature, making sure that the desired output is formatted correctly on the frontend in different environments. I would also make sure that the reports are generated from a read-replica database of the current database so that querying the data is managed within the load and does not overwhelm the backend with CPU and memory usage issues.
 
 - What compromises did you have to make as a result of the time constraints of this challenge?
-I would have added more testing coverage for utility and service functions so that the business logic and requirements are tested against the expected behavior, I would have also tried to simulate larger csv files to setup a batching process for upload operation and making sure that the server is resilient for such edge cases.
+I would have added more testing coverage for utility and service functions so that the business logic and requirements are tested against the expected behavior. Also, I would add a separate logging service for appropriate logging of errors and debug messages so that the service logs can be used to debug potential problems.
+
 ## Submission Instructions
 
 1. Clone the repository.

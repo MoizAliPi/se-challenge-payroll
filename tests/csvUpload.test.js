@@ -1,95 +1,110 @@
-const request = require("supertest");
-const app = require("../app");
-const fs = require("fs");
-const csvUploadService = require("../services/csvUpload.service");
-const { PassThrough } = require("stream");
-
-jest.mock("fs");
-jest.mock("../services/csvUpload.service");
+const sqlite3 = require("sqlite3");
+const { upload } = require("../services/csvUpload.service");
 
 jest.mock("sqlite3", () => {
-  const mDatabase = {
-    run: jest.fn().mockReturnThis(),
-    get: jest.fn().mockReturnThis(),
-    all: jest.fn().mockReturnThis(),
-    close: jest.fn().mockReturnThis(),
+  const mockDatabase = {
+    serialize: jest.fn(),
+    run: jest.fn(),
+    prepare: jest.fn(),
+    close: jest.fn(),
   };
-  const mSqlite3 = {
-    Database: jest.fn(() => mDatabase),
-    verbose: jest.fn(() => mSqlite3),
+  const mockStatement = {
+    run: jest.fn(),
+    finalize: jest.fn(),
   };
-  return mSqlite3;
+  return {
+    verbose: jest.fn(() => ({
+      Database: jest.fn(() => mockDatabase),
+    })),
+    Statement: jest.fn(() => mockStatement),
+  };
 });
 
-describe("POST /api/upload-csv", () => {
+describe("CSV Upload Service", () => {
+  let db, stmt;
+
+  beforeEach(() => {
+    db = new sqlite3.verbose().Database();
+    stmt = new sqlite3.Statement();
+
+    db.serialize.mockImplementation((callback) => callback());
+    db.run.mockImplementation((query, callback) => {
+      if (callback) {
+        callback(null);
+      }
+    });
+    db.prepare.mockReturnValue(stmt);
+    stmt.run.mockImplementation((_, __, ___, ____, callback) => {
+      if (callback) {
+        callback(null);
+      }
+    });
+    stmt.finalize.mockImplementation((callback) => {
+      if (callback) {
+        callback(null);
+      }
+    });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  beforeEach(() => {
-    fs.existsSync.mockReturnValue(false);
-    csvUploadService.upload.mockResolvedValue("File uploaded successfully");
-  });
+  it("should upload CSV data successfully", () => {
+    const data = [
+      {
+        "employee id": "1",
+        "hours worked": 7.5,
+        "job group": "A",
+        date: "2023-11-14",
+      },
+      {
+        "employee id": "2",
+        "hours worked": 4,
+        "job group": "B",
+        date: "2023-11-09",
+      },
+    ];
 
-  it("should upload the CSV file successfully", async () => {
-    fs.createReadStream.mockImplementation(() => {
-      const stream = new PassThrough();
-      process.nextTick(() => {
-        stream.emit("data", {
-          date: "14/11/2023",
-          "hours worked": 7.5,
-          "employee id": "1",
-          "job group": "A",
-        });
-        stream.emit("data", {
-          date: "9/11/2023",
-          "hours worked": 4,
-          "employee id": "2",
-          "job group": "B",
-        });
-        stream.emit("end");
-      });
-      return stream;
+    const result = upload(data);
+
+    expect(db.serialize).toHaveBeenCalled();
+    expect(db.run).toHaveBeenCalledWith("BEGIN TRANSACTION");
+    expect(db.run).toHaveBeenCalledWith("COMMIT");
+    expect(stmt.run).toHaveBeenCalledTimes(data.length);
+
+    data.forEach((row, index) => {
+      expect(stmt.run).toHaveBeenNthCalledWith(
+        index + 1,
+        row["employee id"],
+        row["hours worked"],
+        row["job group"],
+        row.date,
+        expect.any(Function)
+      );
     });
 
-    const res = await request(app)
-      .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv")
-      .expect(200);
-
-    expect(res.text).toBe("File uploaded successfully");
+    expect(result).toBe("CSV file uploaded successfully!");
+    expect(stmt.finalize).toHaveBeenCalled();
   });
 
-  it("should return 400 if file already exists", async () => {
-    fs.existsSync.mockReturnValue(true);
-    const res = await request(app)
-      .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv")
-      .expect(400);
+  it("should throw an error if database insertion fails", () => {
+    const data = [
+      {
+        "employee id": "1",
+        "hours worked": 7.5,
+        "job group": "A",
+        date: "2023-11-14",
+      },
+    ];
 
-    expect(res.body.message).toBe("File already exists");
-  });
+    stmt.run.mockImplementationOnce((_, __, ___, ____, callback) =>
+      callback(new Error("Insertion failed"))
+    );
 
-  it("should return 400 if no file is uploaded", async () => {
-    const res = await request(app).post("/api/upload-csv").expect(400);
-
-    expect(res.body.message).toBe("Invalid CSV file");
-  });
-
-  it("should return 500 if an error occurs", async () => {
-    fs.createReadStream.mockImplementation(() => {
-      const stream = new PassThrough();
-      process.nextTick(() => {
-        stream.emit("error", new Error("Stream error"));
-      });
-      return stream;
-    });
-
-    const res = await request(app)
-      .post("/api/upload-csv")
-      .attach("file", "../__mocks__/test.csv")
-      .expect(500);
-
-    expect(res.text).toBe("Error uploading CSV file");
+    expect(() => upload(data)).toThrow("Insertion failed");
+    expect(db.run).toHaveBeenCalledWith("BEGIN TRANSACTION");
+    expect(stmt.run).toHaveBeenCalled();
+    expect(db.run).not.toHaveBeenCalledWith("COMMIT");
   });
 });

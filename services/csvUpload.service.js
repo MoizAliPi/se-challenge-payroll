@@ -8,12 +8,11 @@ const sqlite3 = require("sqlite3").verbose();
 function upload(data) {
   const db = new sqlite3.Database("employee-time-report.db");
   try {
-    // Start a transaction to improve performance and ensure atomicity
     db.serialize(() => {
-      db.run("BEGIN TRANSACTION"); // Start transaction
+      db.run("BEGIN TRANSACTION");
 
       const sql = `INSERT INTO time_report (employee_id, hours_worked, job_group, date) VALUES (?, ?, ?, ?)`;
-      const stmt = db.prepare(sql); // Prepare the SQL statement
+      const stmt = db.prepare(sql);
 
       for (const row of data) {
         const employee_id = row["employee id"];
@@ -23,19 +22,17 @@ function upload(data) {
 
         stmt.run(employee_id, hours_worked, job_group, date, (err) => {
           if (err) {
-            console.error(err);
-            throw err; // Handle errors appropriately
+            throw err;
           }
         });
       }
 
-      stmt.finalize(); // Finalize the statement
-      db.run("COMMIT"); // Commit the transaction
+      stmt.finalize();
+      db.run("COMMIT");
     });
 
     return "CSV file uploaded successfully!";
   } catch (error) {
-    console.error("Error uploading CSV file:", error);
     throw error;
   }
 }

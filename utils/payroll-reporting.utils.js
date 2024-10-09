@@ -2,6 +2,7 @@
  * For the given date string, returns the corresponding
  * start and end date from the first or second half of the
  * month. For e.g. returns 1st and 15th for the date 7th.
+ *
  * @param {String} date
  * @returns {Object} {startDate, endDate}
  */
@@ -33,6 +34,7 @@ const getPayDateRange = (date) => {
 
 /**
  * Parsing DD/MM/YYYY into a Date object.
+ *
  * @param {String} date
  */
 const formatDateStringIntoDate = (date) => {
@@ -43,6 +45,7 @@ const formatDateStringIntoDate = (date) => {
 
 /**
  * Parsing the date into the format of YYYY-MM-DD.
+ *
  * @param {Date} date
  * @returns {String} formatted date
  */
@@ -55,6 +58,7 @@ const formatDateIntoISODate = (date) => {
 
 /**
  * Formats the number amount in dollar string with decimal points.
+ *
  * @param {number} number
  * @returns {String} formatted amount
  */

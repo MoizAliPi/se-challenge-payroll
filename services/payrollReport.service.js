@@ -27,6 +27,7 @@ const getAmountPaid = (hoursWorked, jobGroup) => {
 /**
  * Adds the dollar amount to a report if it exists within the
  * pay period.
+ *
  * @param {Number} newAmount
  * @param {String} currentAmount
  */
@@ -62,6 +63,8 @@ const isWithinCurrenPayPeriod = (
  */
 const getAllTimeReports = () => {
   const db = new sqlite3.Database("employee-time-report.db");
+  // return the list of reports grouped by each employeeId
+  // and ordered by employeeId and date.
   return new Promise((resolve, reject) => {
     db.all(
       "SELECT * FROM time_report GROUP BY employee_id, date ORDER BY employee_id asc, strftime('%Y-%m-%d', SUBSTR(date, 7, 4) || '-' || SUBSTR(date, 4, 2) || '-' || SUBSTR(date, 1, 2)) ASC;",
@@ -154,10 +157,8 @@ const getReport = async () => {
 
     return sortedEmployeeReport;
   } catch (err) {
-    console.log(err);
-    throw new Error("Error generating report", err);
+    throw new Error(`Error generating report: ${err.message}`);
   }
 };
 
-getReport();
 module.exports = { getReport };

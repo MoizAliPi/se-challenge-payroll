@@ -1,7 +1,6 @@
 const multer = require("multer");
 const path = require("path");
 
-// Set global directory
 global.__basedir = path.join(__dirname, "..");
 
 /**

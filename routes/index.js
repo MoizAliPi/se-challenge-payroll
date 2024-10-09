@@ -14,12 +14,13 @@ const db = new sqlite3.Database("employee-time-report.db", (err) => {
 });
 
 router.get("/health", (_req, res) => {
-  res.status(200).json({ status: "OK" });
   db.all("SELECT * FROM time_report", (err, rows) => {
     if (err) {
       console.error("Error querying database:", err);
+      res.status(500).json({ status: "Cannot connect to database" });
     } else {
       console.log("Rows:", rows);
+      res.status(200).json({ status: "OK" });
     }
   });
 });
